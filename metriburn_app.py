@@ -214,10 +214,35 @@ def load_model():
     return None
 
 def main():
-    # Header with branding
-    st.markdown('<h1 class="main-title">🔥 MetriBurn</h1>', unsafe_allow_html=True)
-    st.markdown('<p class="subtitle">Smart Calorie Tracking for Your Active Lifestyle</p>', unsafe_allow_html=True)
-    st.markdown('<p class="tagline">Powered by Ever Booming Health and Wellness®</p>', unsafe_allow_html=True)
+    # Logo and Header with branding
+    col_logo, col_title = st.columns([1, 3])
+    
+    with col_logo:
+        # Check if logo exists in assets folder, otherwise create a base64 encoded SVG logo
+        logo_path = "assets/metriburn_logo.png"
+        if os.path.exists(logo_path):
+            st.image(logo_path, width=100)
+        else:
+            # Create a simple SVG logo as fallback
+            logo_svg = """
+            <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="flame" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#E57373;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#EF5350;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <circle cx="50" cy="50" r="45" fill="#1E1E1E" stroke="#333" stroke-width="2"/>
+                <path d="M50,20 C60,30 70,40 60,55 C55,62 45,62 40,55 C30,40 40,30 50,20 Z" fill="url(#flame)" />
+                <text x="50" y="75" font-family="Arial" font-size="14" fill="white" text-anchor="middle" font-weight="bold">MetriBurn</text>
+            </svg>
+            """
+            st.markdown(f'<div style="text-align: center;">{logo_svg}</div>', unsafe_allow_html=True)
+    
+    with col_title:
+        st.markdown('<h1 class="main-title">MetriBurn</h1>', unsafe_allow_html=True)
+        st.markdown('<p class="subtitle">Smart Calorie Tracking for Your Active Lifestyle</p>', unsafe_allow_html=True)
+        st.markdown('<p class="tagline">Powered by Ever Booming Health and Wellness®</p>', unsafe_allow_html=True)
     
     # Load resources
     df = load_data()
