@@ -4,12 +4,7 @@ import numpy as np
 import joblib
 import os
 
-# Try to import the base64 encoded logo
-try:
-    from app.logo_base64 import LOGO_BASE64
-    has_logo = True
-except ImportError:
-    has_logo = False
+# Simpler approach without base64 encoding
 
 # Page configuration
 st.set_page_config(
@@ -221,45 +216,18 @@ def load_model():
     return None
 
 def main():
-    # Header with branding and logo
-    if has_logo:
-        # Direct implementation of header with inline HTML
-        header_html = f"""
-        <div style="margin: 1rem 0 2rem 0; text-align: center;">
-            <!-- Logo with more zoom -->
-            <div style="margin-bottom: 1rem;">
-                <img src="data:image/png;base64,{LOGO_BASE64}" 
-                     width="200" height="60" 
-                     alt="MetriBurn Logo"
-                     style="object-fit: contain;">
-            </div>
-            
-            <!-- App description in bold with !important flags -->
-            <div style="margin: 0 !important; padding: 0 !important; font-size: 1.4rem !important; font-weight: bold !important; color: #E0E0E0 !important; line-height: 1.4 !important; display: block !important;">
-                Smart Calorie Tracking for Your Active Lifestyle
-            </div>
-            
-            <!-- Powered by text in smaller font with !important flags -->
-            <div style="margin: 0.2rem 0 0 0 !important; padding: 0 !important; font-size: 0.8rem !important; color: #9E9E9E !important; text-transform: uppercase !important; letter-spacing: 0.5px !important; line-height: 1.2 !important; display: block !important;">
-                Powered by Ever Booming Health and Wellness®
-            </div>
-        </div>
-        """
-        st.markdown(header_html, unsafe_allow_html=True)
-    else:
-        # Fallback if no logo is available
-        st.markdown("""
-        <div style="margin: 1rem 0 2rem 0; text-align: center;">
-            <div style="margin: 0; padding: 0; font-size: 1.4rem; font-weight: bold; color: #E0E0E0; line-height: 1.4;">
-                Smart Calorie Tracking for Your Active Lifestyle
-            </div>
-            <div style="margin: 0.2rem 0 0 0; padding: 0; font-size: 0.8rem; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2;">
-                Powered by Ever Booming Health and Wellness®
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+    # Direct approach using Streamlit's image display
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        # Display logo using Streamlit's native image support
+        st.image("static/logo.png", width=150)
+        
+        # App description with markdown formatting
+        st.markdown("<div style='text-align: center;'><h3>Smart Calorie Tracking for Your Active Lifestyle</h3></div>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: center; font-size: 0.8rem; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px;'>Powered by Ever Booming Health and Wellness®</div>", unsafe_allow_html=True)
     
-    # Load resources
+    # Activity Selection Section
+    st.markdown("## Select Your Activity")
     df = load_data()
     model = load_model()
     if df is None or model is None:
