@@ -237,22 +237,23 @@ def main():
         # Fallback to a similar layout
         logo_html = ""
         if has_logo:
-            logo_html = f'<img src="data:image/png;base64,{LOGO_BASE64}" width="120" height="120" alt="MetriBurn Logo">'
+            # Adjust dimensions to properly show the logo
+            logo_html = f'<img src="data:image/png;base64,{LOGO_BASE64}" width="180" height="80" alt="MetriBurn Logo" style="object-fit: contain;">'
         
         st.markdown(f"""
         <div style="margin: 1rem 0 2rem 0; text-align: center;">
             <!-- Logo only -->
-            <div style="margin-bottom: 0.75rem;">
+            <div style="margin-bottom: 0.75rem; line-height: 0;">
                 {logo_html}
             </div>
             
-            <!-- App description in bold -->
-            <p style="margin: 0; padding: 0; font-size: 1.4rem; font-weight: bold; color: #E0E0E0; line-height: 1.4;">
+            <!-- App description in bold - explicitly setting !important to ensure it displays -->
+            <p style="margin: 0 !important; padding: 0 !important; font-size: 1.4rem !important; font-weight: bold !important; color: #E0E0E0 !important; line-height: 1.4 !important;">
                 Smart Calorie Tracking for Your Active Lifestyle
             </p>
             
-            <!-- Powered by text in smaller font -->
-            <p style="margin: 0.2rem 0 0 0; padding: 0; font-size: 0.8rem; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2;">
+            <!-- Powered by text in smaller font - explicitly setting !important to ensure it displays -->
+            <p style="margin: 0.2rem 0 0 0 !important; padding: 0 !important; font-size: 0.8rem !important; color: #9E9E9E !important; text-transform: uppercase !important; letter-spacing: 0.5px !important; line-height: 1.2 !important;">
                 Powered by Ever Booming Health and Wellness®
             </p>
         </div>

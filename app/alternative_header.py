@@ -19,11 +19,12 @@ def get_alternative_header():
 def get_compact_header():
     return """
     <div style="margin: 1rem 0 2rem 0; text-align: center;">
-        <!-- Logo only -->
-        <div style="margin-bottom: 0.75rem;">
+        <!-- Logo only - using width and height that emphasizes the app name part of the logo -->
+        <div style="margin-bottom: 0.75rem; line-height: 0;">
             <img src="data:image/png;base64,{LOGO_BASE64}" 
-                 width="120" height="120" 
-                 alt="MetriBurn Logo">
+                 width="180" height="80" 
+                 alt="MetriBurn Logo"
+                 style="object-fit: contain;">
         </div>
         
         <!-- App description in bold -->
