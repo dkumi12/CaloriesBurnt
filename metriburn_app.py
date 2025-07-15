@@ -224,6 +224,7 @@ def main():
     # Header with branding and logo
     logo_html = ""
     if has_logo:
+        # Using the official logo with base64 encoding for reliable display
         logo_html = f'<img src="data:image/png;base64,{LOGO_BASE64}" width="80" height="80" alt="MetriBurn Logo" style="margin-right: 1rem;">'
     
     st.markdown(f"""
