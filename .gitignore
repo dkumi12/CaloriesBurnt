@@ -17,9 +17,11 @@ Thumbs.db
 *.log
 *.md
 !README.md
+!UPDATED_DEPLOYMENT_GUIDE.md
 archive/
 utilities/
 *.bat
+!push_requirements_update.bat
 *.sh
 DEPLOYMENT_GUIDE.md
 PROJECT_SHOWCASE.md
