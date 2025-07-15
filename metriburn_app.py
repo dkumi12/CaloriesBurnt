@@ -242,14 +242,13 @@ def main():
         # Powered by text
         st.markdown("<div style='text-align: center; font-size: 0.8rem; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px;'>Powered by Ever Booming Health and Wellness®</div>", unsafe_allow_html=True)
     
-    # Activity Selection Section
-    st.markdown("## Select Your Activity")
+    # Load resources and data
     df = load_data()
     model = load_model()
     if df is None or model is None:
         st.stop()
     
-    # Activity Selection Section
+    # Activity Selection Section - only show the heading once
     st.markdown("## Select Your Activity")
     
     col1, col2 = st.columns([2, 1])
