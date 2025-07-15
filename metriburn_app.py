@@ -229,34 +229,32 @@ def load_model():
 
 def main():
     # Header with branding and logo
-    # Use the compact header layout which shows the logo text better
+    # Use the compact header layout
     if has_logo and has_alternative_header:
         compact_header = get_compact_header().format(LOGO_BASE64=LOGO_BASE64)
         st.markdown(compact_header, unsafe_allow_html=True)
     else:
-        # Fallback to the original layout with cropped logo
+        # Fallback to a similar layout
         logo_html = ""
         if has_logo:
-            # Using CSS to crop the logo to show only the app name, hiding the "Ever Booming" text
-            logo_html = f'''
-            <div style="flex: 0 0 auto; overflow: hidden; height: 70px; width: 150px; position: relative;">
-                <img src="data:image/png;base64,{LOGO_BASE64}" 
-                     alt="MetriBurn Logo"
-                     style="position: absolute; height: 85px; width: 300px; object-fit: cover; object-position: 0% 30%; top: -10px; left: 0;">
-            </div>
-            '''
+            logo_html = f'<img src="data:image/png;base64,{LOGO_BASE64}" width="120" height="120" alt="MetriBurn Logo">'
         
         st.markdown(f"""
-        <div style="margin: 0.75rem 0 1.5rem 0;">
-            <div style="display: flex; align-items: center;">
+        <div style="margin: 1rem 0 2rem 0; text-align: center;">
+            <!-- Logo only -->
+            <div style="margin-bottom: 0.75rem;">
                 {logo_html}
-                
-                <!-- Description stacked beside the logo -->
-                <div style="flex: 1; margin-left: 0.75rem;">
-                    <p style="margin: 0; padding: 0; font-size: 1.1rem; color: #E0E0E0; line-height: 1.3;">Smart Calorie Tracking for Your Active Lifestyle</p>
-                    <p style="margin: 0; padding: 0; font-size: 0.85rem; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.3;">Powered by Ever Booming Health and Wellness®</p>
-                </div>
             </div>
+            
+            <!-- App description in bold -->
+            <p style="margin: 0; padding: 0; font-size: 1.4rem; font-weight: bold; color: #E0E0E0; line-height: 1.4;">
+                Smart Calorie Tracking for Your Active Lifestyle
+            </p>
+            
+            <!-- Powered by text in smaller font -->
+            <p style="margin: 0.2rem 0 0 0; padding: 0; font-size: 0.8rem; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2;">
+                Powered by Ever Booming Health and Wellness®
+            </p>
         </div>
         """, unsafe_allow_html=True)
     
