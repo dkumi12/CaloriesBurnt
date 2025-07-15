@@ -1,0 +1,9 @@
+# For Streamlit Cloud deployment
+# Place this file in the root directory
+
+[theme]
+primaryColor = "#E57373"
+backgroundColor = "#121212"
+secondaryBackgroundColor = "#1E1E1E"
+textColor = "#E0E0E0"
+font = "sans serif"
