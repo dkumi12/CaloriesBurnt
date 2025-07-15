@@ -216,14 +216,30 @@ def load_model():
     return None
 
 def main():
+    # Add custom CSS to control text wrapping
+    st.markdown("""
+    <style>
+    .single-line-heading {
+        white-space: nowrap !important;
+        overflow: visible !important;
+        font-size: 1.3rem !important;
+        font-weight: bold !important;
+        margin: 0.5rem 0 !important;
+        color: #E0E0E0 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # Direct approach using Streamlit's image display
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         # Display logo using Streamlit's native image support
         st.image("static/logo.png", width=150)
         
-        # App description with markdown formatting
-        st.markdown("<div style='text-align: center;'><h3>Smart Calorie Tracking for Your Active Lifestyle</h3></div>", unsafe_allow_html=True)
+        # App description as a single line with custom CSS class
+        st.markdown("<div style='text-align: center;'><p class='single-line-heading'>Smart Calorie Tracking for Your Active Lifestyle</p></div>", unsafe_allow_html=True)
+        
+        # Powered by text
         st.markdown("<div style='text-align: center; font-size: 0.8rem; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px;'>Powered by Ever Booming Health and Wellness®</div>", unsafe_allow_html=True)
     
     # Activity Selection Section
