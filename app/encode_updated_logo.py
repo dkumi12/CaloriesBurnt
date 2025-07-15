@@ -16,8 +16,12 @@ try:
     
     # Define a crop box to zoom in on the important part (left side with app name)
     # Format: (left, top, right, bottom)
-    # Adjust these values to zoom in more or less
-    crop_box = (0, 0, img.width * 0.8, img.height)
+    # More aggressive cropping to focus on the app name
+    width = img.width
+    height = img.height
+    
+    # Focus more tightly on the app name portion
+    crop_box = (0, height * 0.25, width * 0.7, height * 0.75)
     
     # Crop the image
     zoomed_img = img.crop(crop_box)

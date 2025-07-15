@@ -11,13 +11,6 @@ try:
 except ImportError:
     has_logo = False
 
-# Try to import alternative header
-try:
-    from app.alternative_header import get_alternative_header, get_compact_header
-    has_alternative_header = True
-except ImportError:
-    has_alternative_header = False
-
 # Page configuration
 st.set_page_config(
     page_title="MetriBurn - Smart Calorie Tracker",
@@ -229,33 +222,40 @@ def load_model():
 
 def main():
     # Header with branding and logo
-    # Use the compact header layout
-    if has_logo and has_alternative_header:
-        compact_header = get_compact_header().format(LOGO_BASE64=LOGO_BASE64)
-        st.markdown(compact_header, unsafe_allow_html=True)
-    else:
-        # Fallback to a similar layout
-        logo_html = ""
-        if has_logo:
-            # Adjust dimensions to properly show the logo
-            logo_html = f'<img src="data:image/png;base64,{LOGO_BASE64}" width="180" height="80" alt="MetriBurn Logo" style="object-fit: contain;">'
-        
-        st.markdown(f"""
+    if has_logo:
+        # Direct implementation of header with inline HTML
+        header_html = f"""
         <div style="margin: 1rem 0 2rem 0; text-align: center;">
-            <!-- Logo only -->
-            <div style="margin-bottom: 0.75rem; line-height: 0;">
-                {logo_html}
+            <!-- Logo with more zoom -->
+            <div style="margin-bottom: 1rem;">
+                <img src="data:image/png;base64,{LOGO_BASE64}" 
+                     width="200" height="60" 
+                     alt="MetriBurn Logo"
+                     style="object-fit: contain;">
             </div>
             
-            <!-- App description in bold - explicitly setting !important to ensure it displays -->
-            <p style="margin: 0 !important; padding: 0 !important; font-size: 1.4rem !important; font-weight: bold !important; color: #E0E0E0 !important; line-height: 1.4 !important;">
+            <!-- App description in bold with !important flags -->
+            <div style="margin: 0 !important; padding: 0 !important; font-size: 1.4rem !important; font-weight: bold !important; color: #E0E0E0 !important; line-height: 1.4 !important; display: block !important;">
                 Smart Calorie Tracking for Your Active Lifestyle
-            </p>
+            </div>
             
-            <!-- Powered by text in smaller font - explicitly setting !important to ensure it displays -->
-            <p style="margin: 0.2rem 0 0 0 !important; padding: 0 !important; font-size: 0.8rem !important; color: #9E9E9E !important; text-transform: uppercase !important; letter-spacing: 0.5px !important; line-height: 1.2 !important;">
+            <!-- Powered by text in smaller font with !important flags -->
+            <div style="margin: 0.2rem 0 0 0 !important; padding: 0 !important; font-size: 0.8rem !important; color: #9E9E9E !important; text-transform: uppercase !important; letter-spacing: 0.5px !important; line-height: 1.2 !important; display: block !important;">
                 Powered by Ever Booming Health and Wellness®
-            </p>
+            </div>
+        </div>
+        """
+        st.markdown(header_html, unsafe_allow_html=True)
+    else:
+        # Fallback if no logo is available
+        st.markdown("""
+        <div style="margin: 1rem 0 2rem 0; text-align: center;">
+            <div style="margin: 0; padding: 0; font-size: 1.4rem; font-weight: bold; color: #E0E0E0; line-height: 1.4;">
+                Smart Calorie Tracking for Your Active Lifestyle
+            </div>
+            <div style="margin: 0.2rem 0 0 0; padding: 0; font-size: 0.8rem; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2;">
+                Powered by Ever Booming Health and Wellness®
+            </div>
         </div>
         """, unsafe_allow_html=True)
     
