@@ -11,6 +11,13 @@ try:
 except ImportError:
     has_logo = False
 
+# Try to import alternative header
+try:
+    from app.alternative_header import get_alternative_header
+    has_alternative_header = True
+except ImportError:
+    has_alternative_header = False
+
 # Page configuration
 st.set_page_config(
     page_title="MetriBurn - Smart Calorie Tracker",
@@ -222,23 +229,29 @@ def load_model():
 
 def main():
     # Header with branding and logo
-    logo_html = ""
-    if has_logo:
-        # Using the official logo with base64 encoding for reliable display
-        logo_html = f'<img src="data:image/png;base64,{LOGO_BASE64}" width="80" height="80" alt="MetriBurn Logo" style="margin-right: 1rem;">'
-    
-    st.markdown(f"""
-    <div style="display: flex; align-items: center; margin-bottom: 1.5rem; padding: 0.5rem 0;">
-        <div style="flex: 0 0 auto;">
-            {logo_html}
+    # Use the alternative centered header layout with larger logo
+    if has_logo and has_alternative_header:
+        alt_header = get_alternative_header().format(LOGO_BASE64=LOGO_BASE64)
+        st.markdown(alt_header, unsafe_allow_html=True)
+    else:
+        # Fallback to the original layout with larger logo
+        logo_html = ""
+        if has_logo:
+            # Using the official logo with base64 encoding for reliable display - increased size to 120px
+            logo_html = f'<img src="data:image/png;base64,{LOGO_BASE64}" width="120" height="120" alt="MetriBurn Logo" style="margin-right: 1.5rem;">'
+        
+        st.markdown(f"""
+        <div style="display: flex; align-items: center; margin-bottom: 2rem; padding: 1rem 0;">
+            <div style="flex: 0 0 auto;">
+                {logo_html}
+            </div>
+            <div style="flex: 1;">
+                <h1 style="margin: 0; font-size: 2.5rem; background: linear-gradient(135deg, #E57373 0%, #FF8A80 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">MetriBurn</h1>
+                <p style="margin: 0.3rem 0; padding: 0; font-size: 1.25rem; color: #E0E0E0;">Smart Calorie Tracking for Your Active Lifestyle</p>
+                <p style="margin: 0.2rem 0; padding: 0; font-size: 0.95rem; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px;">Powered by Ever Booming Health and Wellness®</p>
+            </div>
         </div>
-        <div style="flex: 1;">
-            <h1 style="margin: 0; font-size: 2.2rem; background: linear-gradient(135deg, #E57373 0%, #FF8A80 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">MetriBurn</h1>
-            <p style="margin: 0; padding: 0; font-size: 1.125rem; color: #E0E0E0;">Smart Calorie Tracking for Your Active Lifestyle</p>
-            <p style="margin: 0; padding: 0; font-size: 0.875rem; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px;">Powered by Ever Booming Health and Wellness®</p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
     
     # Load resources
     df = load_data()
