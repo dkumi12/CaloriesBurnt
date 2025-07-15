@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "caloriesburnt"
+version = "0.1.0"
+description = "Machine learning-powered web application for predicting calories burned during physical activities."
+authors = [
+    {name = "Ever Booming Health and Wellness", email = "example@example.com"}
+]
+requires-python = ">=3.8"
+dependencies = [
+    "streamlit==1.30.0",
+    "numpy==1.26.4",
+    "pandas>=2.2.0",
+    "matplotlib>=3.8.0",
+    "seaborn>=0.13.0",
+    "scikit-learn>=1.4.0",
+    "joblib>=1.3.2",
+    "plotly>=5.15.0",
+]
