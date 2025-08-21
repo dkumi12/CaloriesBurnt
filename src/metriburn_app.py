@@ -1,8 +1,11 @@
 import streamlit as st
+import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
 import os
+
+# Simpler approach without base64 encoding
 
 # Page configuration
 st.set_page_config(
@@ -193,7 +196,7 @@ st.markdown("""
 # Load functions
 @st.cache_data
 def load_data():
-    paths = ["data/engineered_exercise_dataset_expanded.csv", "data/engineered_exercise_dataset.csv"]
+    paths = ["../data/engineered_exercise_dataset_expanded.csv", "../data/engineered_exercise_dataset.csv"]
     for path in paths:
         if os.path.exists(path):
             df = pd.read_csv(path)
@@ -208,49 +211,45 @@ def load_data():
 
 @st.cache_resource
 def load_model():
-    if os.path.exists("models/calories_prediction_model.pkl"):
-        return joblib.load("models/calories_prediction_model.pkl")
+    if os.path.exists("../models/calories_prediction_model.pkl"):
+        return joblib.load("../models/calories_prediction_model.pkl")
     st.error("Model not found!")
     return None
 
 def main():
-    # Logo and Header with branding
-    col_logo, col_title = st.columns([1, 3])
+    # Add custom CSS to control text wrapping
+    st.markdown("""
+    <style>
+    .single-line-heading {
+        white-space: nowrap !important;
+        overflow: visible !important;
+        font-size: 1.3rem !important;
+        font-weight: bold !important;
+        margin: 0.5rem 0 !important;
+        color: #E0E0E0 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
     
-    with col_logo:
-        # Check if logo exists in assets folder, otherwise create a base64 encoded SVG logo
-        logo_path = "assets/metriburn_logo.png"
-        if os.path.exists(logo_path):
-            st.image(logo_path, width=100)
-        else:
-            # Create a simple SVG logo as fallback
-            logo_svg = """
-            <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="flame" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:#E57373;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#EF5350;stop-opacity:1" />
-                    </linearGradient>
-                </defs>
-                <circle cx="50" cy="50" r="45" fill="#1E1E1E" stroke="#333" stroke-width="2"/>
-                <path d="M50,20 C60,30 70,40 60,55 C55,62 45,62 40,55 C30,40 40,30 50,20 Z" fill="url(#flame)" />
-                <text x="50" y="75" font-family="Arial" font-size="14" fill="white" text-anchor="middle" font-weight="bold">MetriBurn</text>
-            </svg>
-            """
-            st.markdown(f'<div style="text-align: center;">{logo_svg}</div>', unsafe_allow_html=True)
+    # Direct approach using Streamlit's image display
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        # Display logo using Streamlit's native image support
+        st.image("static/logo.png", width=150)
+        
+        # App description as a single line with custom CSS class
+        st.markdown("<div style='text-align: center;'><p class='single-line-heading'>Smart Calorie Tracking for Your Active Lifestyle</p></div>", unsafe_allow_html=True)
+        
+        # Powered by text
+        st.markdown("<div style='text-align: center; font-size: 0.8rem; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px;'>Powered by Ever Booming Health and Wellness®</div>", unsafe_allow_html=True)
     
-    with col_title:
-        st.markdown('<h1 class="main-title">MetriBurn</h1>', unsafe_allow_html=True)
-        st.markdown('<p class="subtitle">Smart Calorie Tracking for Your Active Lifestyle</p>', unsafe_allow_html=True)
-        st.markdown('<p class="tagline">Powered by Ever Booming Health and Wellness®</p>', unsafe_allow_html=True)
-    
-    # Load resources
+    # Load resources and data
     df = load_data()
     model = load_model()
     if df is None or model is None:
         st.stop()
     
-    # Activity Selection Section
+    # Activity Selection Section - only show the heading once
     st.markdown("## Select Your Activity")
     
     col1, col2 = st.columns([2, 1])

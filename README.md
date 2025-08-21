@@ -75,7 +75,7 @@ source venv/bin/activate  # On Windows: venv\\Scripts\\activate
 pip install -r requirements.txt
 
 # Run the application
-streamlit run metriburn_app.py
+streamlit run src/metriburn_app.py
 ```
 
 ### **Usage**
@@ -89,11 +89,13 @@ streamlit run metriburn_app.py
 
 ```
 MetriBurn/
-├── metriburn_app.py          # Main Streamlit application
-├── utilities/                # Shared utility functions
-│   ├── shared_utils.py      # Professional utilities and validation
-│   ├── create_sample_data.py # Data preparation utilities
-│   └── [analysis tools]     # Additional utility scripts
+├── src/                      # Source code
+│   ├── metriburn_app.py     # Main Streamlit application
+│   └── utilities/           # Shared utility functions
+│       ├── logo_base64.py   # Logo encoding utilities
+│       └── encode_logo.py   # Asset encoding utilities
+├── docs/                     # Documentation
+│   └── DEPLOYMENT_GUIDE.md  # Deployment instructions
 ├── tests/                    # Comprehensive test suite
 │   ├── test_shared_utils.py # Utility function tests (9 tests)
 │   └── __init__.py          # Test package initialization
@@ -104,6 +106,8 @@ MetriBurn/
 ├── LICENSE                   # MIT License
 ├── .gitignore               # Git ignore rules
 ├── requirements.txt         # Python dependencies
+├── runtime.txt              # Python version specification
+├── packages.txt             # System packages for deployment
 └── README.md                # This documentation
 ```
 
@@ -180,7 +184,7 @@ tests/test_shared_utils.py::test_format_duration_display_edge_cases PASSED
 
 ### **Local Development**
 ```bash
-streamlit run metriburn_app.py --server.runOnSave true
+streamlit run src/metriburn_app.py --server.runOnSave true
 ```
 
 ### **Production Deployment**
