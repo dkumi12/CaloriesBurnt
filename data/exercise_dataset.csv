@@ -1,0 +1,31 @@
+"Activity, Exercise or Sport (1 hour)",130 lb,155 lb,180 lb,205 lb,Calories per kg
+"Running, 5 mph (12 min/mile)",395,472,548,624,6.71
+"Running, 6 mph (10 min/mile)",494,590,685,780,8.39
+"Running, 8 mph (7.5 min/mile)",742,885,1027,1170,12.59
+"Cycling, light effort (10-12 mph)",296,354,411,468,5.04
+"Cycling, moderate effort (12-14 mph)",395,472,548,624,6.71
+"Cycling, vigorous effort (14-16 mph)",494,590,685,780,8.39
+"Swimming, freestyle, slow",346,413,479,546,5.87
+"Swimming, freestyle, fast",494,590,685,780,8.39
+"Swimming, butterfly",544,649,753,858,9.23
+"Walking, 2.5 mph, leisurely pace",124,148,171,195,2.11
+"Walking, 3.5 mph, brisk pace",187,224,260,296,3.19
+"Walking, 4.5 mph, very brisk",280,334,387,441,4.75
+"Yoga, Hatha",153,183,212,242,2.6
+"Yoga, Power",235,281,326,371,4.0
+"Stretching, mild",100,120,139,158,1.71
+"Weight lifting, light workout",187,224,260,296,3.19
+"Weight lifting, vigorous workout",296,354,411,468,5.04
+"Calisthenics, moderate",235,281,326,371,4.0
+"Dancing, slow",173,207,240,273,2.94
+"Dancing, fast",324,387,449,511,5.5
+"Aerobics, low impact",249,298,346,394,4.24
+"Basketball, game",395,472,548,624,6.71
+"Soccer, competitive",445,531,616,702,7.55
+"Tennis, singles",395,472,548,624,6.71
+"Boxing, sparring",445,531,616,702,7.55
+Martial arts,346,413,479,546,5.87
+Rock climbing,544,649,753,858,9.23
+"Rowing, moderate",346,413,479,546,5.87
+"Rowing, vigorous",593,708,822,936,10.07
+Jumping rope,395,472,548,624,6.71

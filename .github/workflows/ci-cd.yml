@@ -1,0 +1,346 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov flake8 black isort mypy
+    
+    - name: Lint with flake8
+      run: |
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Check code formatting with black
+      run: |
+        black --check --diff .
+      continue-on-error: true
+    
+    - name: Run tests with pytest
+      run: |
+        pytest tests/ -v --cov=utilities --cov-report=xml
+      continue-on-error: true
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+      continue-on-error: true
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install safety bandit
+    
+    - name: Check for security vulnerabilities
+      run: |
+        safety check --json || echo "Security vulnerabilities found"
+    
+    - name: Run bandit security linter
+      run: |
+        bandit -r utilities/ app/ -f json || echo "Security issues found"
+
+  streamlit-test:
+    name: Streamlit Application Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Test Streamlit app import
+      run: |
+        python -c "
+        try:
+            import metriburn_app
+            print('SUCCESS: Streamlit app imports correctly')
+        except Exception as e:
+            print(f'ERROR: Streamlit app import failed: {e}')
+            exit(1)
+        "
+    
+    - name: Validate model files
+      run: |
+        python -c "
+        import os
+        model_files = ['models/calories_burned_model.pkl', 'models/scaler.pkl']
+        for file in model_files:
+            if os.path.exists(file):
+                print(f'SUCCESS: {file} found')
+            else:
+                print(f'WARNING: {file} not found - may need training')
+        """"
+Shared utility functions for MetriBurn Calorie Prediction App.
+Professional utilities following ThriveAfrica patterns for consistency.
+"""
+
+import pandas as pd
+import numpy as np
+import logging
+from typing import Dict, Any, Tuple, Union, List
+from datetime import datetime
+import hashlib
+import json
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+
+def validate_calorie_input(input_data: Dict[str, Any]) -> Tuple[bool, str]:
+    """
+    Validate input data for calorie prediction with comprehensive error checking.
+    
+    Args:
+        input_data: Dictionary containing weight, duration, and activity
+        
+    Returns:
+        Tuple of (is_valid, error_message)
+    """
+    required_fields = ['weight', 'duration', 'activity']
+    
+    try:
+        # Check for missing fields
+        missing_fields = [field for field in required_fields if field not in input_data]
+        if missing_fields:
+            return False, f"Missing required fields: {', '.join(missing_fields)}"
+        
+        # Validate data types and ranges
+        validations = [
+            ('weight', lambda x: isinstance(x, (int, float)) and 30 <= x <= 300),  # kg
+            ('duration', lambda x: isinstance(x, (int, float)) and 1 <= x <= 480),  # minutes
+            ('activity', lambda x: isinstance(x, str) and len(x.strip()) > 0),
+        ]
+        
+        for field, validator in validations:
+            if not validator(input_data[field]):
+                return False, f"Invalid value for {field}: {input_data[field]}"
+        
+        return True, "Valid input data"
+        
+    except Exception as e:
+        logger.error(f"Error validating calorie input data: {str(e)}")
+        return False, f"Validation error: {str(e)}"
+
+
+def calculate_calorie_metrics(calories_burned: float, weight: float, duration: float) -> Dict[str, Any]:
+    """
+    Calculate additional metrics from basic calorie burn prediction.
+    
+    Args:
+        calories_burned: Predicted calories burned
+        weight: User weight in kg
+        duration: Exercise duration in minutes
+        
+    Returns:
+        Dictionary with calculated metrics
+    """
+    try:
+        # Calculate calories per minute
+        calories_per_minute = calories_burned / max(duration, 1)
+        
+        # Calculate calories per kg body weight
+        calories_per_kg = calories_burned / max(weight, 1)
+        
+        # Calculate MET (Metabolic Equivalent) approximation
+        # MET = (calories/hour) / (weight_kg * 1.05)
+        calories_per_hour = calories_per_minute * 60
+        met_estimate = calories_per_hour / (weight * 1.05)
+        
+        # Exercise intensity classification
+        if met_estimate < 3.0:
+            intensity = "Light"
+        elif met_estimate < 6.0:
+            intensity = "Moderate"
+        else:
+            intensity = "Vigorous"
+        
+        return {
+            'calories_per_minute': round(calories_per_minute, 2),
+            'calories_per_kg': round(calories_per_kg, 2),
+            'met_estimate': round(met_estimate, 1),
+            'intensity_level': intensity,
+            'total_calories': round(calories_burned, 1)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error calculating calorie metrics: {str(e)}")
+        return {
+            'calories_per_minute': 0.0,
+            'calories_per_kg': 0.0,
+            'met_estimate': 0.0,
+            'intensity_level': "Unknown",
+            'total_calories': 0.0
+        }
+
+
+def get_food_equivalents(calories: float) -> List[Dict[str, Any]]:
+    """
+    Convert calories to equivalent food items for better understanding.
+    
+    Args:
+        calories: Number of calories burned
+        
+    Returns:
+        List of food equivalent dictionaries
+    """
+    food_items = [
+        {"name": "Apple", "calories_per_unit": 95, "unit": "medium apple"},
+        {"name": "Banana", "calories_per_unit": 105, "unit": "medium banana"},
+        {"name": "Slice of Pizza", "calories_per_unit": 285, "unit": "slice"},
+        {"name": "Chocolate Bar", "calories_per_unit": 235, "unit": "bar"},
+        {"name": "Can of Soda", "calories_per_unit": 140, "unit": "can"},
+        {"name": "Donut", "calories_per_unit": 190, "unit": "donut"},
+        {"name": "Cup of Rice", "calories_per_unit": 205, "unit": "cup"},
+    ]
+    
+    equivalents = []
+    for food in food_items:
+        quantity = calories / food["calories_per_unit"]
+        if quantity >= 0.1:  # Only show if meaningful quantity
+            equivalents.append({
+                "food": food["name"],
+                "quantity": round(quantity, 1),
+                "unit": food["unit"],
+                "display": f"{quantity:.1f} {food['unit']}{'s' if quantity > 1 and not food['unit'].endswith('s') else ''}"
+            })
+    
+    return equivalents
+
+
+def format_duration_display(minutes: float) -> str:
+    """
+    Format duration in a user-friendly way.
+    
+    Args:
+        minutes: Duration in minutes
+        
+    Returns:
+        Formatted duration string
+    """
+    try:
+        if minutes < 60:
+            return f"{int(minutes)} minutes"
+        else:
+            hours = int(minutes // 60)
+            remaining_minutes = int(minutes % 60)
+            if remaining_minutes == 0:
+                return f"{hours} hour{'s' if hours > 1 else ''}"
+            else:
+                return f"{hours}h {remaining_minutes}m"
+    except Exception as e:
+        logger.error(f"Error formatting duration: {str(e)}")
+        return f"{int(minutes)} minutes"
+
+
+class CaloriePredictionLogger:
+    """
+    Logging system for calorie predictions following ThriveAfrica patterns.
+    """
+    
+    def __init__(self, log_file: str = "logs/calorie_predictions.log"):
+        self.log_file = log_file
+        self.logger = logging.getLogger('calorie_audit')
+        
+        # Ensure logs directory exists
+        os.makedirs("logs", exist_ok=True)
+        
+        # Create file handler if not exists
+        if not self.logger.handlers:
+            handler = logging.FileHandler(log_file)
+            formatter = logging.Formatter('%(asctime)s - CALORIE_AUDIT - %(message)s')
+            handler.setFormatter(formatter)
+            self.logger.addHandler(handler)
+            self.logger.setLevel(logging.INFO)
+    
+    def log_prediction(self, input_data: Dict[str, Any], prediction: float, 
+                      metrics: Dict[str, Any] = None) -> str:
+        """
+        Log a calorie prediction for audit and analytics.
+        
+        Args:
+            input_data: Input parameters (weight, duration, activity)
+            prediction: Predicted calories burned
+            metrics: Additional calculated metrics
+            
+        Returns:
+            Audit log entry ID
+        """
+        try:
+            # Create unique audit ID
+            audit_id = hashlib.md5(
+                f"{datetime.now().isoformat()}{json.dumps(input_data, sort_keys=True)}".encode()
+            ).hexdigest()[:16]
+            
+            audit_entry = {
+                "audit_id": audit_id,
+                "timestamp": datetime.now().isoformat(),
+                "activity": input_data.get('activity', 'unknown'),
+                "weight_kg": input_data.get('weight', 0),
+                "duration_min": input_data.get('duration', 0),
+                "calories_predicted": round(prediction, 2),
+                "metrics": metrics or {},
+                "model_version": "1.0"
+            }
+            
+            self.logger.info(json.dumps(audit_entry))
+            return audit_id
+            
+        except Exception as e:
+            logger.error(f"Failed to log calorie prediction: {str(e)}")
+            return "audit_failed"
