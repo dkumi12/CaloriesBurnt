@@ -11,7 +11,8 @@
 
 ## 🚀 Live Demo
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/dkumi12/CaloriesBurnt/main/metriburn_app.py)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)]
+([https://metriburn-ebhnww.streamlit.app/])
 
 ## ✨ Core Features
 
