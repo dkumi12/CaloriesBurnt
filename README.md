@@ -79,38 +79,59 @@ pip install -r requirements.txt
 streamlit run src/metriburn_app.py
 ```
 
-### **Usage**
-1. **Access the app**: Open http://localhost:8501 in your browser
-2. **Select activity**: Choose from 1,248+ available exercises
-3. **Enter details**: Input your weight and exercise duration
-4. **Get prediction**: Receive accurate calorie burn estimation
-5. **View insights**: See MET values, intensity levels, and food equivalents
+The app will open at: http://localhost:8501
+
+**For a detailed 5-minute setup guide, see [QUICK_START.md](QUICK_START.md)**
 
 ## 📁 Project Structure
 
 ```
-MetriBurn/
-├── src/                      # Source code
-│   ├── metriburn_app.py     # Main Streamlit application
-│   └── utilities/           # Shared utility functions
-│       ├── logo_base64.py   # Logo encoding utilities
-│       └── encode_logo.py   # Asset encoding utilities
-├── docs/                     # Documentation
-│   └── DEPLOYMENT_GUIDE.md  # Deployment instructions
-├── tests/                    # Comprehensive test suite
-│   ├── test_shared_utils.py # Utility function tests (9 tests)
-│   └── __init__.py          # Test package initialization
-├── data/                     # Dataset storage
-├── models/                   # Trained ML models
-├── static/                   # Web assets and styling
-├── .github/workflows/        # CI/CD automation
-├── LICENSE                   # MIT License
-├── .gitignore               # Git ignore rules
-├── requirements.txt         # Python dependencies
-├── runtime.txt              # Python version specification
-├── packages.txt             # System packages for deployment
-└── README.md                # This documentation
+CaloriesBurnt/
+├── README.md                    # Main documentation
+├── ARCHITECTURE.md              # System design & ML pipeline
+├── DEPLOYMENT.md                # Setup & deployment guide
+├── USAGE.md                     # How to use & integration examples
+├── QUICK_START.md               # 5-minute onboarding guide
+├── LICENSE                      # MIT License
+├── .gitignore                   # Git ignore rules
+├── requirements.txt             # Python dependencies
+├── runtime.txt                  # Python version specification
+├── packages.txt                 # System packages for deployment
+│
+├── .streamlit/
+│   └── config.toml              # Streamlit configuration
+│
+├── docs/
+│   ├── DATA.md                  # Dataset documentation (1,248+ exercises)
+│   └── INTEGRATION.md           # Integration guide (6 frameworks)
+│
+├── src/
+│   └── metriburn_app.py         # Main Streamlit application
+│
+├── tests/
+│   ├── test_shared_utils.py     # Utility function tests (9 tests)
+│   └── __init__.py              # Test package initialization
+│
+├── data/
+│   └── engineered_exercise_dataset.csv  # 1,248+ exercise database
+│
+├── models/
+│   └── calories_prediction_model.pkl    # Trained ML model
+│
+└── static/
+    └── logo.png                 # Brand logo
 ```
+
+## 📚 Documentation Guide
+
+This project includes comprehensive documentation:
+
+- **[QUICK_START.md](QUICK_START.md)** - Get running in 5 minutes (start here!)
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System design, ML model details, data pipeline
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - How to deploy (Streamlit Cloud, Docker, AWS, etc.)
+- **[USAGE.md](USAGE.md)** - How to use the app with code examples
+- **[docs/DATA.md](docs/DATA.md)** - Dataset documentation (1,248+ exercises)
+- **[docs/INTEGRATION.md](docs/INTEGRATION.md)** - Integration with 6+ frameworks
 
 ## 🧪 Testing & Validation
 
@@ -183,17 +204,29 @@ tests/test_shared_utils.py::test_format_duration_display_edge_cases PASSED
 
 ## 🚀 Deployment
 
-### **Local Development**
-```bash
-streamlit run src/metriburn_app.py --server.runOnSave true
-```
+### **Current: Streamlit Cloud**
+**Live App**: https://metriburn-ebhnww.streamlit.app/
 
-### **Production Deployment**
-- **Streamlit Cloud**: Automatic deployment from GitHub
-- **Environment**: Python 3.11+ with optimized dependencies
-- **Performance**: Fast loading with cached models and efficient processing
+### **Other Deployment Options**
+- Docker containerization
+- Heroku
+- AWS EC2
+- FastAPI REST API
 
-## 🤝 Contributing
+**For complete deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)**
+
+## 🤝 Integration
+
+CaloriesBurnt can be integrated into various applications:
+
+- **Python**: Direct ML model usage
+- **Django/Flask**: Web application integration
+- **React Native**: Mobile app integration
+- **iOS**: SwiftUI integration
+- **REST API**: HTTP endpoint integration
+- **Databases**: SQL and MongoDB integration
+
+**See [docs/INTEGRATION.md](docs/INTEGRATION.md) for code examples and implementation patterns**
 
 We welcome contributions! Please follow these guidelines:
 
