@@ -44,11 +44,6 @@ Normalize Features:
 Create Feature Vector (11 dimensions)
 ```
 
-**Reference Weight Strategy:**
-- Calibrate predictions at 4 standard weights
-- Linear interpolation for user's actual weight
-- Accounts for non-linear metabolic scaling
-
 ### 3. Model Training
 - **Algorithm**: Gradient Boosting / Random Forest Regression
 - **Target Variable**: Calories burned per hour
@@ -60,11 +55,6 @@ Create Feature Vector (11 dimensions)
 3. Calories per kg (per-kilogram normalization)
 4. Normalized calorie ratios
 5. Intensity-based scaling factors
-
-**Validation Strategy:**
-- Cross-validation on activity types
-- Tested against MET database standards
-- Prediction range: 90-2,400 cal/hour
 
 ### 4. Prediction Pipeline
 
@@ -103,75 +93,48 @@ Create Feature Vector (11 dimensions)
 ### Frontend Architecture (Streamlit)
 
 #### 1. Activity Selection Module
-```python
-┌─ Activity Browsing
-│  ├─ Filter by type (5 categories)
-│  ├─ Search from 1,248+ exercises
-│  └─ View activity details (MET, intensity, avg burn)
-└─ Activity Details
-   ├─ Type badge with emoji
-   ├─ Intensity indicator
-   └─ Average burn rate (cal/hour)
-```
+- Filter by type (5 categories)
+- Search from 1,248+ exercises
+- View activity details (MET, intensity, avg burn)
+- Real-time category filtering
 
 #### 2. User Input Module
-```python
-┌─ Weight Input (lbs)
-│  └─ Range: 80-400 lbs
-├─ Duration Input (minutes)
-│  └─ Range: 5-300 minutes
-└─ Validation
-   └─ Real-time input checking
-```
+- Weight Input (lbs) - Range: 80-400 lbs
+- Duration Input (minutes) - Range: 5-300 minutes
+- Real-time input validation
+- Helpful placeholder suggestions
 
 #### 3. Calculation Engine
-```python
-┌─ Load Activity Data
-├─ Extract MET & calibration values
-├─ Calculate weight-based ratios
-├─ Prepare feature vector (11 dimensions)
-├─ Run model inference
-├─ Calculate total calories (hourly rate × duration)
-└─ Generate metrics (per hour, per minute)
-```
+- Load Activity Data from CSV
+- Extract MET & calibration values
+- Calculate weight-based ratios
+- Prepare feature vector (11 dimensions)
+- Run model inference
+- Calculate total calories (hourly rate × duration)
 
 #### 4. Results & Insights Module
-```python
-┌─ Primary Metrics
-│  ├─ Total calories burned
-│  ├─ Calories per hour
-│  └─ Calories per minute
-├─ Food Equivalents
-│  ├─ Pizza slices
-│  ├─ Medium apples
-│  ├─ Chocolate bars
-│  └─ Soda cans
-├─ Motivational Message
-│  ├─ Based on burn intensity
-│  └─ Encourages fitness goals
-└─ Activity Recommendations
-   ├─ Similar burn-rate activities
-   ├─ Alternative exercise options
-   └─ Intensity-matched suggestions
-```
+- Primary Metrics (total, per hour, per minute)
+- Food Equivalents (pizza, apples, chocolate, soda)
+- Motivational Message (based on burn intensity)
+- Activity Recommendations (similar burn-rate activities)
 
 ## Model Details
 
 ### Feature Specification (11 Total)
 
-| # | Feature | Type | Range | Purpose | Example |
-|---|---------|------|-------|---------|---------|
-| 1 | estimated_met | float | 0.9-20.0 | Activity intensity | 9.8 (Running) |
-| 2 | 130 lb | float | 90-2400 | Light person calibration | 450 |
-| 3 | 155 lb | float | 105-2800 | Standard reference (WHO) | 525 |
-| 4 | 180 lb | float | 120-3200 | Heavier calibration | 600 |
-| 5 | 205 lb | float | 135-3400 | Very heavy calibration | 700 |
-| 6 | Calories per kg | float | 0.5-50 | Weight-normalized burn | 6.4 |
-| 7 | calories_per_130lb | float | 90-2400 | Repeated for validation | 450 |
-| 8 | calories_per_155lb | float | 105-2800 | Repeated for validation | 525 |
-| 9 | calories_per_180lb | float | 120-3200 | Repeated for validation | 600 |
-| 10 | calories_per_205lb | float | 135-3400 | Repeated for validation | 700 |
-| 11 | normalized_calories_per_kg | float | 0-1 | Scaled [0,1] range | 0.42 |
+| Feature | Type | Range | Purpose | Example |
+|---------|------|-------|---------|---------|
+| estimated_met | float | 0.9-20.0 | Activity intensity | 9.8 (Running) |
+| 130 lb | float | 90-2400 | Light person calibration | 450 |
+| 155 lb | float | 105-2800 | Standard reference (WHO) | 525 |
+| 180 lb | float | 120-3200 | Heavier calibration | 600 |
+| 205 lb | float | 135-3400 | Very heavy calibration | 700 |
+| Calories per kg | float | 0.5-50 | Weight-normalized burn | 6.4 |
+| calories_per_130lb | float | 90-2400 | Repeated for validation | 450 |
+| calories_per_155lb | float | 105-2800 | Repeated for validation | 525 |
+| calories_per_180lb | float | 120-3200 | Repeated for validation | 600 |
+| calories_per_205lb | float | 135-3400 | Repeated for validation | 700 |
+| normalized_calories_per_kg | float | 0-1 | Scaled [0,1] range | 0.42 |
 
 ### Performance Metrics
 
@@ -180,71 +143,6 @@ Create Feature Vector (11 dimensions)
 - **Prediction Range**: 90-2,400 calories/hour
 - **Mean Absolute Error**: ±10% typical deviation
 - **R² Score**: 0.92+ on validation set
-
-### Weight Normalization Strategy
-
-The model uses 4 reference weights for calibration:
-
-```
-Weight Range Analysis:
-├─ 130 lbs (59 kg): Light/Petite individuals
-├─ 155 lbs (70 kg): WHO Standard reference
-├─ 180 lbs (82 kg): Average adult
-└─ 205 lbs (93 kg): Heavier individuals
-
-For user at 170 lbs:
-  170 is between 155 (reference) and 180
-  
-  Interpolation:
-  weight_ratio_155 = 155 / 170 = 0.912
-  weight_ratio_180 = 180 / 170 = 1.059
-  
-  Model predicts for both ratios,
-  then interpolates to user's actual weight
-```
-
-## Integration Points
-
-### 1. Python Direct Integration
-```python
-from metriburn import CalorieCalculator
-
-calc = CalorieCalculator()
-calories = calc.predict(
-    activity="Running",
-    weight_lbs=170,
-    duration_minutes=30
-)
-# Output: 340 calories
-```
-
-### 2. REST API Deployment
-```python
-# FastAPI server
-@app.post("/predict")
-def predict(
-    activity: str,
-    weight_lbs: float,
-    duration_minutes: int
-) -> PredictionResponse:
-    calories = model.predict(features)
-    return {
-        "activity": activity,
-        "calories": calories,
-        "confidence": 0.92
-    }
-```
-
-### 3. Mobile App Integration
-- Streamlit Cloud URL (current)
-- REST API backend (future)
-- Native iOS/Android apps (planned)
-
-### 4. Health Platform APIs
-- Apple HealthKit
-- Google Fit
-- Fitbit API
-- Garmin Connect
 
 ## Deployment Architecture
 
@@ -276,37 +174,16 @@ User Access
 - Page response: <100ms
 - Concurrent users: 50+
 
-### Production Alternatives
-
-**Option 1: Docker Container**
-```bash
-docker build -t metriburn .
-docker run -p 8501:8501 metriburn
-```
-
-**Option 2: REST API (FastAPI)**
-```bash
-pip install fastapi uvicorn
-uvicorn api.main:app --host 0.0.0.0 --port 8000
-```
-
-**Option 3: AWS Lambda**
-```python
-def lambda_handler(event, context):
-    result = predict(event['activity'], event['weight'], event['duration'])
-    return {'statusCode': 200, 'body': result}
-```
-
 ## Caching Strategy
 
 ### Streamlit Caching
 
 ```python
-@st.cache_data  # Persistent cache, survives reruns
+@st.cache_data  # Persistent cache
 def load_data():
     return pd.read_csv("data/engineered_exercise_dataset.csv")
 
-@st.cache_resource  # Singleton, loaded once
+@st.cache_resource  # Singleton
 def load_model():
     return joblib.load("models/calories_prediction_model.pkl")
 ```
@@ -316,11 +193,6 @@ def load_model():
 - Model loads once per session
 - Eliminates redundant file I/O
 - Sub-second app response times
-
-### CSS Caching
-- Inline CSS for Streamlit components
-- Dark theme applied app-wide
-- Custom fonts loaded via CDN
 
 ## Security & Privacy
 
@@ -336,12 +208,6 @@ def load_model():
 - ✓ No sensitive data in model
 - ✓ Predictions don't leak training data
 - ✓ Safe mathematical operations only
-
-### Privacy Compliance
-- No personal health information collected
-- No HIPAA requirements (educational tool)
-- Local processing, no cloud data transfer
-- Can be deployed on private networks
 
 ## Performance Optimization
 
@@ -365,83 +231,7 @@ Total Response: <100ms
 - Dataset: ~2 MB
 - Model: ~500 KB
 - CSS/Assets: ~100 KB
-- **Total: ~3 MB** (very efficient)
-
-### Scalability
-- Streamlit Cloud: Auto-scales to 50+ concurrent users
-- REST API: Easily scales with load balancer
-- No database = no bottlenecks
-- Stateless = horizontal scaling ready
-
-## Future Enhancements
-
-### Phase 1: User Profiles
-- Save favorite activities
-- Track workout history
-- Personal recommendations
-- Trend analysis
-
-### Phase 2: Advanced Features
-- Heart rate-based calculation
-- VO2 max integration
-- Real-time wearable sync
-- Social leaderboards
-
-### Phase 3: ML Improvements
-- Personalization model
-- Time-of-day adjustments
-- Environmental factors (altitude, temperature)
-- Technique-based fine-tuning
-
-### Phase 4: Enterprise
-- Multi-user management
-- API key authentication
-- Usage analytics
-- SLA monitoring
-
-## Architecture Diagrams
-
-### System Components
-```
-┌──────────────────────────────────────────────────┐
-│                                                  │
-│         Streamlit Web Interface                  │
-│  (Activity Selection + User Input + Results)     │
-│                                                  │
-└──────────────────────┬───────────────────────────┘
-                       │
-                       ▼
-┌──────────────────────────────────────────────────┐
-│     ML Prediction Engine                         │
-│  (Feature Engineering + Model Inference)         │
-└──────────────────────┬───────────────────────────┘
-                       │
-        ┌──────────────┼──────────────┐
-        ▼              ▼              ▼
-    ┌────────┐    ┌────────┐    ┌────────┐
-    │ Dataset│    │ Model  │    │  Logic │
-    │ (CSV)  │    │(joblib)│    │(Python)│
-    └────────┘    └────────┘    └────────┘
-```
-
-### Data Flow
-```
-1,248+ Exercises
-    ↓
-[Activity Selection]
-    ↓
-[User Details: Weight + Duration]
-    ↓
-[Feature Engineering: Weight ratios, MET lookup]
-    ↓
-[ML Model: Regression prediction]
-    ↓
-[Calculation: Total calories (per hour × duration)]
-    ↓
-[Results: Metrics + Food equivalents + Recommendations]
-    ↓
-[Display: Streamlit UI with styling]
-```
+- **Total: ~3 MB**
 
 ## Code Quality
 
