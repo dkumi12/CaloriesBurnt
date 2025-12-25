@@ -15,8 +15,15 @@ Thumbs.db
 
 # Project specific
 *.log
-*.md
-!README.md
+# Allow important documentation files
+!ARCHITECTURE.md
+!DEPLOYMENT.md
+!USAGE.md
+!QUICK_START.md
+!POLISH_COMPLETE.md
+!docs/
+!docs/*.md
+# Ignore old/temporary markdown files
 archive/
 utilities/
 *.bat
